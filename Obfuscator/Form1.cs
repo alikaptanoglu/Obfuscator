@@ -32,11 +32,34 @@ namespace Obfuscator
         }
 
         private void button2_Click(object sender, EventArgs e)
-        {
-            if (textBox1.Text != "")
+        {  
+            if (bmp != null)
             {
-
+                pictureBox1.Image = fullRandom(bmp);
             }
+        }
+
+        private Bitmap fullRandom(Bitmap bmp)
+        {
+            Random rnd = new Random();
+            int newX, newY;
+            Color c1, c2;
+
+            for (int xCount = 0; xCount < bmp.Width; xCount++)
+            {
+                for (int yCount = 0; yCount < bmp.Height; yCount++)
+                {
+                    c1 = bmp.GetPixel(xCount, yCount);
+                    newX = rnd.Next(0, bmp.Width);
+                    newY = rnd.Next(0, bmp.Height);
+                    c2 = bmp.GetPixel(newX, newY);
+
+                    bmp.SetPixel(xCount, yCount, c2);
+                    bmp.SetPixel(newX, newY, c1);
+                }
+            }
+
+            return bmp;
         }
     }
 }
