@@ -35,7 +35,7 @@ namespace Obfuscator
         {  
             if (bmp != null)
             {
-                pictureBox1.Image = halfRandom(bmp);
+                pictureBox1.Image = seventhRandom(bmp);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Obfuscator
             return bmp;
         }
 
-        private Bitmap halfRandom(Bitmap bmp)
+        private Bitmap seventhRandom(Bitmap bmp)
         {
             Random rnd = new Random();
             int newX, newY;
@@ -72,7 +72,7 @@ namespace Obfuscator
             {
                 for (int yCount = 0; yCount < bmp.Height; yCount++)
                 {
-                    if (xCount % 2 == 0)
+                    if (xCount % 7 != 0)
                     {
                         c1 = bmp.GetPixel(xCount, yCount);
                         newX = rnd.Next(0, bmp.Width);
