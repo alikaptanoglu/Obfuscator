@@ -37,7 +37,7 @@ namespace Obfuscator
         {  
             if (bmp != null)
             {
-                pictureBox1.Image = seventhRandom(bmp);
+                pictureBox1.Image = jigsaw(bmp, 8);
             }
         }
 
@@ -90,27 +90,41 @@ namespace Obfuscator
             return bmp;
         }
 
-        private Bitmap jigsaw(Bitmap bmp)
+        private Bitmap jigsaw(Bitmap bmp, int parts)
         {
             Random rnd = new Random();
-            int newX, newY;
-            Color c1, c2;
+            int xStep = bmp.Width / parts;
+            int yStep = bmp.Height / parts;
 
-            for (int xCount = 0; xCount < bmp.Width; xCount++)
+            List<Point> pList = new List<Point>();
+
+            for (int xCount = 0; xCount < bmp.Width; xCount += xStep)
             {
-                for (int yCount = 0; yCount < bmp.Height; yCount++)
+                for (int yCount = 0; yCount < bmp.Height; yCount += yStep)
                 {
-                    if (xCount % 7 != 0)
-                    {
-                        c1 = bmp.GetPixel(xCount, yCount);
-                        newX = rnd.Next(0, bmp.Width);
-                        newY = rnd.Next(0, bmp.Height);
-                        c2 = bmp.GetPixel(newX, newY);
-
-                        bmp.SetPixel(xCount, yCount, c2);
-                        bmp.SetPixel(newX, newY, c1);
-                    }
+                    pList.Add(new Point(xCount, yCount));
                 }
+            }
+
+            Point current, destination;
+            /*for (int i = 0; i < pList.Count; i++)
+            {
+                selector = rnd.Next(0, pList.Count);
+                CopyBmpRegion(bmp, new Rectangle(pList[i].X, pList[i].Y, xStep, yStep), pList[selector]);
+            }*/
+            while (pList.Count > 1)
+            {
+                current = pList[rnd.Next(0, pList.Count)];
+                destination = pList[rnd.Next(0, pList.Count)];
+                while (current.Equals(destination))
+                {
+                    current = pList[rnd.Next(0, pList.Count)];
+                }
+                CopyBmpRegion(bmp, new Rectangle(current.X, current.Y, xStep, yStep), destination);
+                // TODO: This only makes sense if we're really swapping, not just copying one over the other.
+                //       This way we're only touching a random amount more than half of the rectangles.
+                pList.Remove(current);
+                pList.Remove(destination);
             }
 
             return bmp;
