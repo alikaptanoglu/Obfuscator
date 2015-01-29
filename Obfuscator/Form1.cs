@@ -106,25 +106,39 @@ namespace Obfuscator
                 }
             }
 
-            Point current, destination;
+            Point p1, p2;
             /*for (int i = 0; i < pList.Count; i++)
             {
                 selector = rnd.Next(0, pList.Count);
                 CopyBmpRegion(bmp, new Rectangle(pList[i].X, pList[i].Y, xStep, yStep), pList[selector]);
             }*/
+            p1 = pList[rnd.Next(0, pList.Count)];
+            p2 = pList[rnd.Next(0, pList.Count)];
+            while (p1.Equals(p2))
+            {
+                p1 = pList[rnd.Next(0, pList.Count)];
+            }
+            CopyBmpRegion(bmp, new Rectangle(p1.X, p1.Y, xStep, yStep), p2);
+            pList.Remove(p2);
             while (pList.Count > 1)
             {
-                current = pList[rnd.Next(0, pList.Count)];
-                destination = pList[rnd.Next(0, pList.Count)];
-                while (current.Equals(destination))
+                // Fill the p1 with something
+                p2 = pList[rnd.Next(0, pList.Count)];
+                while (p1.Equals(p2))
                 {
-                    current = pList[rnd.Next(0, pList.Count)];
+                    p2 = pList[rnd.Next(0, pList.Count)];
                 }
-                CopyBmpRegion(bmp, new Rectangle(current.X, current.Y, xStep, yStep), destination);
-                // TODO: This only makes sense if we're really swapping, not just copying one over the other.
-                //       This way we're only touching a random amount more than half of the rectangles.
-                pList.Remove(current);
-                pList.Remove(destination);
+                CopyBmpRegion(bmp, new Rectangle(p2.X, p2.Y, xStep, yStep), p1);
+                pList.Remove(p1);
+
+                // Fill the p2 with something
+                p1 = pList[rnd.Next(0, pList.Count)];
+                while (p1.Equals(p2))
+                {
+                    p1 = pList[rnd.Next(0, pList.Count)];
+                }
+                CopyBmpRegion(bmp, new Rectangle(p1.X, p1.Y, xStep, yStep), p2);
+                pList.Remove(p2);
             }
 
             return bmp;
@@ -141,21 +155,21 @@ namespace Obfuscator
 
             // Lock the bits into memory
             BitmapData bmpData = image.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.ReadWrite, image.PixelFormat);
-            int pxlSize = (bmpData.Stride / bmpData.Width); //calculate the pixel width (in bytes) of the current image.
-            int src = 0; int dest = 0; //source/destination pixels.
+            int pxlSize = (bmpData.Stride / bmpData.Width); //calculate the pixel width (in bytes) of the p1 image.
+            int src = 0; int dest = 0; //source/p2 pixels.
 
-            //account for the fact that not all of the source rectangle may be able to copy into the destination:
+            //account for the fact that not all of the source rectangle may be able to copy into the p2:
             int width = (destLocation.X + srcRect.Width) <= image.Width ? srcRect.Width : (image.Width - (destLocation.X + srcRect.Width));
             int height = (destLocation.Y + srcRect.Height) <= image.Height ? srcRect.Height : (image.Height - (destLocation.Y + srcRect.Height));
 
-            //managed buffer to hold the current pixel data.
+            //managed buffer to hold the p1 pixel data.
             byte[] buffer = new byte[pxlSize];
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    //calculate the start of the current source pixel and destination pixel.
+                    //calculate the start of the p1 source pixel and p2 pixel.
                     src = ((srcRect.Y + y) * bmpData.Stride) + ((srcRect.X + x) * pxlSize);
                     dest = ((destLocation.Y + y) * bmpData.Stride) + ((destLocation.X + x) * pxlSize);
 
