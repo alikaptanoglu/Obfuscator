@@ -107,11 +107,8 @@ namespace Obfuscator
             }
 
             Point p1, p2;
-            /*for (int i = 0; i < pList.Count; i++)
-            {
-                selector = rnd.Next(0, pList.Count);
-                CopyBmpRegion(bmp, new Rectangle(pList[i].X, pList[i].Y, xStep, yStep), pList[selector]);
-            }*/
+
+            // First select two targets and overwrite one with the other
             p1 = pList[rnd.Next(0, pList.Count)];
             p2 = pList[rnd.Next(0, pList.Count)];
             while (p1.Equals(p2))
@@ -120,9 +117,12 @@ namespace Obfuscator
             }
             CopyBmpRegion(bmp, new Rectangle(p1.X, p1.Y, xStep, yStep), p2);
             pList.Remove(p2);
+
+            // Now find something to overwrite the area we copied from, then do the
+            // same to overwrite the area we copied from to accomplish this in the first place.
             while (pList.Count > 1)
             {
-                // Fill the p1 with something
+                // Fill p1 with something
                 p2 = pList[rnd.Next(0, pList.Count)];
                 while (p1.Equals(p2))
                 {
@@ -131,7 +131,7 @@ namespace Obfuscator
                 CopyBmpRegion(bmp, new Rectangle(p2.X, p2.Y, xStep, yStep), p1);
                 pList.Remove(p1);
 
-                // Fill the p2 with something
+                // Fill p2 with something
                 p1 = pList[rnd.Next(0, pList.Count)];
                 while (p1.Equals(p2))
                 {
