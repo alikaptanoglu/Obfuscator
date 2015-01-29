@@ -37,7 +37,7 @@ namespace Obfuscator
         {  
             if (bmp != null)
             {
-                pictureBox1.Image = jigsaw(bmp, 8);
+                pictureBox1.Image = jigsaw(bmp, 40);
             }
         }
 
@@ -98,9 +98,9 @@ namespace Obfuscator
 
             List<Point> pList = new List<Point>();
 
-            for (int xCount = 0; xCount < bmp.Width; xCount += xStep)
+            for (int xCount = 0; xCount <= bmp.Width - xStep; xCount += xStep)
             {
-                for (int yCount = 0; yCount < bmp.Height; yCount += yStep)
+                for (int yCount = 0; yCount <= bmp.Height - yStep; yCount += yStep)
                 {
                     pList.Add(new Point(xCount, yCount));
                 }
