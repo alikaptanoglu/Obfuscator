@@ -92,6 +92,10 @@ namespace Obfuscator
 
         private Bitmap jigsaw(Bitmap bmp, int parts)
         {
+            if (parts > bmp.Width / 2 || parts > bmp.Height / 2)
+            {
+                throw new ArgumentException("Too many parts, better use fullRandom");
+            }
             Random rnd = new Random();
             int xStep = bmp.Width / parts;
             int yStep = bmp.Height / parts;
