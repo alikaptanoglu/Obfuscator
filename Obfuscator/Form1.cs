@@ -37,7 +37,7 @@ namespace Obfuscator
         {  
             if (bmp != null)
             {
-                pictureBox1.Image = jigsaw(bmp, 40);
+                pictureBox1.Image = jigsaw(bmp, 19);
             }
         }
 
@@ -117,6 +117,7 @@ namespace Obfuscator
             }
             CopyBmpRegion(bmp, new Rectangle(p1.X, p1.Y, xStep, yStep), p2);
             pList.Remove(p2);
+            
 
             // Now find something to overwrite the area we copied from, then do the
             // same to overwrite the area we copied from to accomplish this in the first place.
@@ -130,6 +131,11 @@ namespace Obfuscator
                 }
                 CopyBmpRegion(bmp, new Rectangle(p2.X, p2.Y, xStep, yStep), p1);
                 pList.Remove(p1);
+
+                if (pList.Count == 1)
+                {
+                    break;
+                }
 
                 // Fill p2 with something
                 p1 = pList[rnd.Next(0, pList.Count)];
